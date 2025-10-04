@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+	<meta charset="UTF-8">
+    <title>Solveur de Triangles</title>
+    <style>
+        /* NOUVELLE RÈGLE POUR LE CENTRAGE DE LA PAGE */
+        .page-container {
+            max-width: 1000px; /* Limite la largeur totale du site */
+            margin: 0 auto; /* Centrage horizontal */
+            padding: 0 15px;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px 0; /* Retirer le padding latéral du body pour laisser .page-container gérer */
+            background-color: #f4f7f6; 
+            color: #333;
+        }
+
+        h1, h2 {
+            color: #0056b3; 
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        /* --- Conteneurs Flex pour la mise en page principale --- */
+        .main-content {
+            display: flex;
+            justify-content: center; /* Centrer les blocs entre eux si l'espace le permet */
+            flex-wrap: wrap;
+            gap: 30px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        /* AJUSTEMENT DU BLOC D'ENREGISTREMENT DES DONNÉES */
+        .input-group {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px; /* LARGEUR RÉDUITE */
+            width: 100%; /* S'assure qu'il utilise toute la place disponible sous 450px */
+            flex-grow: 0; /* L'empêche de s'étirer (remplace flex: 1) */
+        }
+        
+        .reference-image {
+            flex-shrink: 0;
+            max-width: 300px; 
+            width: 100%; 
+            text-align: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .reference-image img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #dc3545; 
+            border-radius: 4px;
+            margin-top: 10px;
+            background-color: #e6f7ff; 
+        }
+
+        /* --- Amélioration du Tableau d'Entrée --- */
+        .input-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .input-table td {
+            padding: 8px 5px;
+        }
+        
+        .input-table td:nth-child(even) {
+            text-align: right;
+        }
+
+        input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 80px; 
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        
+        /* --- Boutons --- */
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:first-of-type {
+            background-color: #007bff; 
+            color: white;
+        }
+
+        button:first-of-type:hover {
+            background-color: #0056b3;
+        }
+
+        #clearButton {
+            background-color: #dc3545; 
+            color: white;
+            margin-left: 10px;
+        }
+
+        #clearButton:hover {
+            background-color: #c82333;
+        }
+        
+        /* --- Résultats et Canvas --- */
+        #results-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 20px;
+            width: 100%;
+            justify-content: center; /* Centrer les résultats et le canvas */
+        }
+
+        #resultsText {
+            max-width: 450px; /* Garde la même largeur que le bloc d'entrée */
+            width: 100%;
+            flex-grow: 0;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-width: 300px;
+        }
+        
+        #resultsText table {
+             border-collapse: collapse;
+        }
+
+        #resultsText th, #resultsText td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+
+        #triangleCanvas {
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            /* Le canvas a une taille fixe (400x300) par défaut, pas besoin de max-width ici */
+        }
+
+        /* --- Responsive adjustments --- */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            .input-group, .reference-image, #resultsText {
+                width: 100%;
+                max-width: 90%; /* Ajustement pour laisser un peu de marge sur les petits écrans */
+                min-width: unset;
+            }
+            #results-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            #triangleCanvas {
+                width: 100%;
+                height: auto;
+                max-width: 400px;
+            }
+        }
+		
+		 /* --- Responsive adjustments --- */
+    @media (max-width: 768px) {
+        .main-content {
+            flex-direction: column; 
+            align-items: center;
+        }
+        /* S'assure que chaque bloc prend une bonne largeur sans être trop écrasé */
+        .input-group, .reference-image, #resultsText, #triangleCanvas {
+            width: 90%; 
+            max-width: 90%;
+            min-width: unset;
+        }
+        #results-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        #triangleCanvas {
+            /* Garder une taille décente ou la rendre fluide */
+            width: 100%; 
+            max-width: 400px;
+            height: auto; 
+        }
+        .page-container {
+            padding: 0 5px; /* Réduire le padding sur les bords */
+        }
+    }
+    </style>
+</head>
+<body>
+
+    <div class="page-container">
+        <h1>Solveur de Triangles (Géométrie & Trigonométrie)</h1>
+
+        <div class="main-content">
+            <div class="input-group">
+                <h2>Saisissez les valeurs connues</h2>
+                <p>Veuillez entrer **au moins 3 valeurs** (côtés et/ou angles) pour que le triangle soit résoluble.</p>
+                
+                <table class="input-table">
+                    <tr>
+                        <td>Côté a:</td>
+                        <td><input type="number" id="sideA" placeholder="Longueur a"></td>
+                        <td>Angle A (°):</td>
+                        <td><input type="number" id="angleA" placeholder="Angle A"></td>
+                    </tr>
+                    <tr>
+                        <td>Côté b:</td>
+                        <td><input type="number" id="sideB" placeholder="Longueur b"></td>
+                        <td>Angle B (°):</td>
+                        <td><input type="number" id="angleB" placeholder="Angle B"></td>
+                    </tr>
+                    <tr>
+                        <td>Côté c:</td>
+                        <td><input type="number" id="sideC" placeholder="Longueur c"></td>
+                        <td>Angle C (°):</td>
+                        <td><input type="number" id="angleC" placeholder="Angle C"></td>
+                    </tr>
+                </table>
+
+                <button onclick="solveTriangle()">Calculer & Dessiner</button>
+                <button id="clearButton" onclick="clearData()">Effacer les Données</button> 
+            </div>
+
+            <div class="reference-image">
+                <h3>Convention de Nommage</h3>
+                <img src="triangle_convention.png" 
+                    alt="Diagramme montrant les côtés a, b, c opposés aux angles A, B, C d'un triangle."
+                    style="border-color: #dc3545; max-width: 250px;">
+                <p style="color: #dc3545;">(a opposé à A, b opposé à B, c opposé à C)</p>
+            </div>
+        </div>
+
+        <h2>Résultats et Visualisation</h2>
+        <div id="results-container">
+            <div id="resultsText"></div>
+            <canvas id="triangleCanvas" width="400" height="300"></canvas>
+        </div>
+    </div>
+
+    <script>
+        const PI = Math.PI;
+        function degToRad(degrees) { return degrees * (PI / 180); }
+        function radToDeg(radians) { return radians * (180 / PI); }
+
+        function solveTriangle() {
+            let a = parseFloat(document.getElementById('sideA').value) || null;
+            let b = parseFloat(document.getElementById('sideB').value) || null;
+            let c = parseFloat(document.getElementById('sideC').value) || null;
+            let A_deg = parseFloat(document.getElementById('angleA').value) || null;
+            let B_deg = parseFloat(document.getElementById('angleB').value) || null;
+            let C_deg = parseFloat(document.getElementById('angleC').value) || null;
+            let A_rad = A_deg ? degToRad(A_deg) : null;
+            let B_rad = B_deg ? degToRad(B_deg) : null;
+            let C_rad = C_deg ? degToRad(C_deg) : null;
+
+            const knownValuesCount = [a, b, c, A_deg, B_deg, C_deg].filter(val => val !== null).length;
+            document.getElementById('resultsText').innerHTML = '';
+            
+            if (knownValuesCount < 3 || (a === null && b === null && c === null)) {
+                document.getElementById('resultsText').innerHTML = '<p style="color: red; font-weight: bold;">⚠️ Erreur : Saisir au moins 3 valeurs dont un côté.</p>';
+                clearCanvas();
+                return;
+            }
+            
+            let solved = calculateAll(a, b, c, A_rad, B_rad, C_rad); 
+
+            if (solved.A_rad !== null && solved.B_rad !== null && solved.C_rad !== null) {
+                if (solved.a + solved.b <= solved.c || solved.a + solved.c <= solved.b || solved.b + solved.c <= solved.a) {
+                    document.getElementById('resultsText').innerHTML = '<p style="color: red; font-weight: bold;">❌ Erreur : Inégalité Triangulaire non respectée.</p>';
+                    clearCanvas();
+                    return;
+                }
+                
+                const totalAngleDeg = radToDeg(solved.A_rad + solved.B_rad + solved.C_rad);
+                if (Math.abs(totalAngleDeg - 180) > 0.01) {
+                    document.getElementById('resultsText').innerHTML = `<p style="color: red; font-weight: bold;">❌ Erreur : Somme des angles incohérente (${totalAngleDeg.toFixed(2)}°).</p>`;
+                    clearCanvas();
+                    return;
+                }
+
+                displayResults(solved);
+                drawTriangle(solved);
+            } else {
+                document.getElementById('resultsText').innerHTML = '<p style="color: orange; font-weight: bold;">⚠️ Calcul Incomplet : Vérifiez la cohérence de vos entrées.</p>';
+                clearCanvas();
+            }
+        }
+
+        function calculateAll(a, b, c, A_rad, B_rad, C_rad) {
+            let solved = { a, b, c, A_rad, B_rad, C_rad };
+            let maxIterations = 10;
+            for (let i = 0; i < maxIterations; i++) {
+                let valuesFound = 0;
+                let knownAngles = [solved.A_rad, solved.B_rad, solved.C_rad].filter(val => val !== null);
+                if (knownAngles.length === 2) { 
+                    const missingAngleRad = PI - knownAngles[0] - knownAngles[1];
+                    if (missingAngleRad > 0 && missingAngleRad < PI) {
+                        if (solved.A_rad === null) { solved.A_rad = missingAngleRad; valuesFound++; }
+                        else if (solved.B_rad === null) { solved.B_rad = missingAngleRad; valuesFound++; }
+                        else if (solved.C_rad === null) { solved.C_rad = missingAngleRad; valuesFound++; }
+                    }
+                }
+                if (solved.a === null && solved.b !== null && solved.c !== null && solved.A_rad !== null) { solved.a = Math.sqrt(solved.b * solved.b + solved.c * solved.c - 2 * solved.b * solved.c * Math.cos(solved.A_rad)); valuesFound++; }
+                if (solved.b === null && solved.a !== null && solved.c !== null && solved.B_rad !== null) { solved.b = Math.sqrt(solved.a * solved.a + solved.c * solved.c - 2 * solved.a * solved.c * Math.cos(solved.B_rad)); valuesFound++; }
+                if (solved.c === null && solved.a !== null && solved.b !== null && solved.C_rad !== null) { solved.c = Math.sqrt(solved.a * solved.a + solved.b * solved.b - 2 * solved.a * solved.b * Math.cos(solved.C_rad)); valuesFound++; }
+                
+                if (solved.a !== null && solved.b !== null && solved.c !== null) {
+                    if (solved.A_rad === null) { let cosA = (solved.b * solved.b + solved.c * solved.c - solved.a * solved.a) / (2 * solved.b * solved.c); if (cosA >= -1 && cosA <= 1) { solved.A_rad = Math.acos(cosA); valuesFound++; }}
+                    if (solved.B_rad === null) { let cosB = (solved.a * solved.a + solved.c * solved.c - solved.b * solved.b) / (2 * solved.a * solved.c); if (cosB >= -1 && cosB <= 1) { solved.B_rad = Math.acos(cosB); valuesFound++; }}
+                    if (solved.C_rad === null) { let cosC = (solved.a * solved.a + solved.b * solved.b - solved.c * solved.c) / (2 * solved.a * solved.b); if (cosC >= -1 && cosC <= 1) { solved.C_rad = Math.acos(cosC); valuesFound++; }}
+                }
+
+                let ratio = null;
+                if (solved.a !== null && solved.A_rad !== null && Math.sin(solved.A_rad) !== 0) ratio = solved.a / Math.sin(solved.A_rad);
+                else if (solved.b !== null && solved.B_rad !== null && Math.sin(solved.B_rad) !== 0) ratio = solved.b / Math.sin(solved.B_rad);
+                else if (solved.c !== null && solved.C_rad !== null && Math.sin(solved.C_rad) !== 0) ratio = solved.c / Math.sin(solved.C_rad);
+
+                if (ratio !== null) {
+                    if (solved.b === null && solved.B_rad !== null) { solved.b = ratio * Math.sin(solved.B_rad); valuesFound++; }
+                    if (solved.c === null && solved.C_rad !== null) { solved.c = ratio * Math.sin(solved.C_rad); valuesFound++; }
+                    if (solved.a === null && solved.A_rad !== null) { solved.a = ratio * Math.sin(solved.A_rad); valuesFound++; }
+                    
+                    if (solved.A_rad === null && solved.a !== null && solved.b !== null && solved.B_rad !== null) { const sinA = solved.a * Math.sin(solved.B_rad) / solved.b; if (sinA <= 1 && sinA >= -1) { solved.A_rad = Math.asin(sinA); valuesFound++; }}
+                    if (solved.B_rad === null && solved.b !== null && solved.c !== null && solved.C_rad !== null) { const sinB = solved.b * Math.sin(solved.C_rad) / solved.c; if (sinB <= 1 && sinB >= -1) { solved.B_rad = Math.asin(sinB); valuesFound++; }}
+                    if (solved.C_rad === null && solved.c !== null && solved.a !== null && solved.A_rad !== null) { const sinC = solved.c * Math.sin(solved.A_rad) / solved.a; if (sinC <= 1 && sinC >= -1) { solved.C_rad = Math.asin(sinC); valuesFound++; }}
+                }
+                
+                if (valuesFound === 0) break;
+            }
+
+            if (solved.a && solved.b && solved.c) {
+                const s = (solved.a + solved.b + solved.c) / 2;
+                const area_sq = s * (s - solved.a) * (s - solved.b) * (s - solved.c);
+                if (area_sq > 0) { solved.area = Math.sqrt(area_sq); }
+            }
+            return solved;
+        }
+        
+        function clearCanvas() {
+            const ctx = document.getElementById('triangleCanvas').getContext('2d');
+            ctx.clearRect(0, 0, 400, 300);
+        }
+
+        function clearData() {
+            document.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
+            document.getElementById('resultsText').innerHTML = '';
+            clearCanvas();
+        }
+
+        function displayResults(solved) {
+            let resultHTML = '<h3>✅ Résolution Complète :</h3>';
+            resultHTML += '<table style="width: 100%;"><tr><th>Côté</th><th>Longueur</th><th>Angle</th><th>Degrés</th></tr>';
+            resultHTML += `<tr><td>a</td><td><b style="color:#007bff;">${solved.a.toFixed(3)}</b></td><td>A</td><td><b style="color:#dc3545;">${radToDeg(solved.A_rad).toFixed(2)}°</b></td></tr>`;
+            resultHTML += `<tr><td>b</td><td><b style="color:#007bff;">${solved.b.toFixed(3)}</b></td><td>B</td><td><b style="color:#dc3545;">${radToDeg(solved.B_rad).toFixed(2)}°</b></td></tr>`;
+            resultHTML += `<tr><td>c</td><td><b style="color:#007bff;">${solved.c.toFixed(3)}</b></td><td>C</td><td><b style="color:#dc3545;">${radToDeg(solved.C_rad).toFixed(2)}°</b></td></tr>`;
+            resultHTML += '</table>';
+            if (solved.area) { resultHTML += `<p style="margin-top: 15px;">**Aire du Triangle** = <b>${solved.area.toFixed(3)}</b></p>`; }
+            document.getElementById('resultsText').innerHTML = resultHTML;
+        }
+
+        function drawTriangle(solved) {
+            const canvas = document.getElementById('triangleCanvas');
+            const ctx = canvas.getContext('2d');
+            const W = canvas.width; const H = canvas.height;
+            ctx.clearRect(0, 0, W, H);
+            
+            const maxSide = Math.max(solved.a, solved.b, solved.c);
+            const padding = 30; const drawingSpace = Math.min(W - 2 * padding, H - 2 * padding);
+            const scale = drawingSpace / maxSide * 0.9; 
+
+            const A_coords = { x: padding, y: H - padding };
+            const B_coords = { x: padding + solved.c * scale, y: H - padding };
+            const Cx = A_coords.x + solved.b * scale * Math.cos(solved.A_rad);
+            const Cy = A_coords.y - solved.b * scale * Math.sin(solved.A_rad); 
+            const C_coords = { x: Cx, y: Cy };
+            
+            const minX = Math.min(A_coords.x, B_coords.x, C_coords.x);
+            const maxX = Math.max(A_coords.x, B_coords.x, C_coords.x);
+            const adjustmentX = (W - (maxX - minX)) / 2 - minX;
+
+            A_coords.x += adjustmentX; B_coords.x += adjustmentX; C_coords.x += adjustmentX;
+            
+            ctx.beginPath();
+            ctx.moveTo(A_coords.x, A_coords.y); ctx.lineTo(B_coords.x, B_coords.y);
+            ctx.lineTo(C_coords.x, C_coords.y); ctx.closePath();
+            
+            ctx.fillStyle = '#e6f7ff'; ctx.fill();
+            ctx.strokeStyle = '#0056b3'; ctx.lineWidth = 2; ctx.stroke();
+
+            ctx.fillStyle = '#dc3545'; ctx.font = 'bold 13px Arial';
+            ctx.fillText(`c: ${solved.c.toFixed(1)}`, (A_coords.x + B_coords.x) / 2 - 20, A_coords.y + 15);
+            ctx.fillText(`a: ${solved.a.toFixed(1)}`, (B_coords.x + C_coords.x) / 2 + 5, (B_coords.y + C_coords.y) / 2 + 5);
+            ctx.fillText(`b: ${solved.b.toFixed(1)}`, (A_coords.x + C_coords.x) / 2 - 30, (A_coords.y + C_coords.y) / 2);
+
+            ctx.fillStyle = '#000'; ctx.font = 'bold 16px Arial';
+            ctx.fillText('A', A_coords.x - 15, A_coords.y + 5);
+            ctx.fillText('B', B_coords.x + 5, B_coords.y + 5);
+            ctx.fillText('C', C_coords.x - 5, C_coords.y - 15);
+        }
+    </script>
+
+</body>
+</html>
