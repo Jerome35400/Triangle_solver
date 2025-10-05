@@ -2,7 +2,7 @@
   "name": "Solveur de Triangles",
   "short_name": "Solveur",
   "description": "Calculateur trigonométrique de triangles pour résoudre les côtés et angles manquants.",
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#f4f7f6",
   "theme_color": "#0056b3",
@@ -14,3 +14,4 @@
     }
   ]
 }
+
