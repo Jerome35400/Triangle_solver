@@ -2,16 +2,17 @@
   "name": "Solveur de Triangles",
   "short_name": "Solveur",
   "description": "Calculateur trigonométrique de triangles pour résoudre les côtés et angles manquants.",
-  "start_url": "/",
+  "start_url": "https://github.com/Jerome35400/Triangle_solver/blob/main/index.html",
   "display": "standalone",
   "background_color": "#f4f7f6",
   "theme_color": "#0056b3",
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "https://github.com/Jerome35400/Triangle_solver/blob/main/icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ]
 }
+
 
